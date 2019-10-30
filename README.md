@@ -1,68 +1,109 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Custom Hooks & Immutable Data Patterns
 
-## Available Scripts
+- Separate rendering from logic
+- Create a custom Hook
+- Immutable data patterns with Objects and Arrays
 
-In the project directory, you can run:
+## Recap - Rules of Hooks
 
-### `npm start`
+- Only call Hooks from the top-level of a function component or a custom Hook.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  - Cannot be called in React class components, loops, if statement, regular function, in event handlers
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- A custom Hook must start with the keyword "use"
 
-### `npm test`
+  - a custom Hook can call other custom or built-in Hooks.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
 
-### `npm run build`
+// allowed?
+const TweetList = () => {
+  const [user, setUser] = useState(null);
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  if (user) {
+    useEffect(() => {
+      axios.get('/api/tweets/')
+      .then(res => console.log(res.data))
+    }, [])
+  }
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+// allowed?
+class Tweet extends React.component {
 
-### `npm run eject`
+  render(){
+    const [tweets, setTweets] = useState([])
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+    return(
+      <div><h1>Tweets</h1>
+    )
+  }
+}
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+// allowed?
+const useData = () => {
+  const [value, setValue] = useState(null)
+}
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+// allowed?
+const getTodo = (id) => {
+  const [todo, setTodo] = useState([]);
+}
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
 
-## Learn More
+## Custom Hooks
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- React is usually coupling the UI to a component
+- Sometimes we just want to use some code logic without tying it to a particular UI
+- Custom Hooks allow us to do that
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Example of custom hook
 
-### Code Splitting
+- [Custom Hook - Browser Dimensions](https://codesandbox.io/s/custom-hooks-exercise-browser-dimensions-j80xw)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+In the example where we used `useEffect` to perform a request to Github and pull out the contributors to the Tweeter repo, the request is actually tied to the component itself. What about is we want to reuse the request?
 
-### Analyzing the Bundle Size
+[api request](https://codesandbox.io/s/api-request-customhook-exercise-pnje8)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+## Immutable Data Patterns with Arrays and Objects
 
-### Making a Progressive Web App
+Immutability is an important concept of `Functional Programming`.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+From Wikipedia
 
-### Advanced Configuration
+> In computing, a persistent data structure is a data structure that always preserves the previous version of itself when it is modified. Such data structures are effectively immutable, as their operations do not (visibly) update the structure in-place, but instead always yield a new updated structure.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+In other words...
 
-### Deployment
+- Don’t mutate data, and if you have to – create a clone and mutate it.
+- Reuse unchanged parts. Only changed parts should be changed.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+### Benefits of immutability
 
-### `npm run build` fails to minify
+- Immutable data structure are simpler to construct, test, and use
+- Truly immutable values are always thread-safe
+- Immutable data is side-effect free (avoids unexpected bugs hard to detect)
+- You can quicky compare the previous and the new version
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Some libraries enforce immutability
+
+- [immutable js](https://immutable-js.github.io/immutable-js/)
+- [mori](https://swannodette.github.io/mori/)
+- [Rambda js](https://ramdajs.com/)
+
+### Arrays
+
+- An array is not immutable in JavaScript
+- we need to use only the pure array methods and the spread operator
+- The pure array methods are the ones that create a new array when something changes
+
+  - pop(), push() and splice() are not pure
+  - concat(), slice() are pure
+
+[Immutable Arrays](https://codesandbox.io/s/strange-neumann-j5g5y)
+
+### Objects
+
+[Immutable Objects](https://codesandbox.io/s/modest-pare-28lgm)

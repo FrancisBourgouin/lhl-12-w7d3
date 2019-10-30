@@ -29,7 +29,7 @@ const useTodoFunctionality = (id) => {
   const [todo, setTodo] = useState([]);
 }
 
-const App = () => {
+const Widget = () => {
   const [titleList, setTitleList] = useState([])
   const [titleOfPage, setTitle] = useState("")
 
@@ -37,14 +37,13 @@ const App = () => {
     fetchPageStuff(setTitleList)
   },[])
 
-  const fancyListOfTitles = titleList.map(title => <h2>{title}</h2>)
   return (
-    <div className="App">
-      <h1>Let's play with hooks & custom hooks !</h1>
+    <div className="Widget">
+      <h1>I AM WIDGET</h1>
       <p>{titleList}</p>
-      {fancyListOfTitles}
+      { bob && <button>YAY</button>}
     </div>
   );
 }
 
-export default App;
+export default Widget;
